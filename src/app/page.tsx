@@ -12,15 +12,23 @@ export default function Home() {
 
   const handleExplain = async () => {
     if (!errorInput.trim()) return;
-    const result = analyzeCORSError(errorInput);
-    setAnalysis(result);
+    try {
+      const result = analyzeCORSError(errorInput);
+      setAnalysis(result);
 
-    // Background log to Firebase
-    analyticsLog(result, errorInput);
+      // Background log to Firebase
+      analyticsLog(result, errorInput);
+    } catch (error) {
+      console.error("[v0] Error analyzing CORS:", error);
+    }
   };
 
   const analyticsLog = async (result: CORSAnalysis, raw: string) => {
-    await logCORSError(result.errorType, result.framework, raw, userId || undefined);
+    try {
+      await logCORSError(result.errorType, result.framework, raw, userId || undefined);
+    } catch (error) {
+      console.error("[v0] Error logging CORS error:", error);
+    }
   };
 
   return (

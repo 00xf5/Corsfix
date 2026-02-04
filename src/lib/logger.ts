@@ -1,9 +1,19 @@
 import { neon } from '@neondatabase/serverless';
 
-const sql = neon(process.env.DATABASE_URL!);
+const getDatabaseClient = () => {
+    const databaseUrl = process.env.DATABASE_URL;
+    if (!databaseUrl) {
+        console.warn("DATABASE_URL not configured. Error logging disabled.");
+        return null;
+    }
+    return neon(databaseUrl);
+};
 
 export async function logCORSError(errorType: string, framework: string, rawError: string, userId?: string) {
     try {
+        const sql = getDatabaseClient();
+        if (!sql) return;
+
         // Note: You need to create this table in Neon first:
         // CREATE TABLE IF NOT EXISTS error_logs (
         //   id SERIAL PRIMARY KEY,
