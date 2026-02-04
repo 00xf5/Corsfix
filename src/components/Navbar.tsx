@@ -1,9 +1,9 @@
 'use client';
 
 import { SignInButton, SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
-import { Shield, Zap, LayoutDashboard, Crown } from 'lucide-react';
+import { Zap, LayoutDashboard, Crown } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
 export default function Navbar({ onUpgradeClick }: { onUpgradeClick?: () => void }) {
   const { user } = useUser();
@@ -13,8 +13,14 @@ export default function Navbar({ onUpgradeClick }: { onUpgradeClick?: () => void
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/20 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 group-hover:bg-indigo-500/20 transition-all duration-300">
-            <Shield className="w-4 h-4 text-indigo-400" />
+          <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center border border-indigo-500/20 group-hover:border-indigo-500/40 transition-all duration-300">
+            <Image
+              src="/logo.png"
+              alt="CORSFIX Logo"
+              width={32}
+              height={32}
+              className="object-cover w-full h-full"
+            />
           </div>
           <span className="font-bold tracking-tight text-lg">
             CORS<span className="text-indigo-400">FIX</span>

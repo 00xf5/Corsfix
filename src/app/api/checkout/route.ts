@@ -6,6 +6,10 @@ const polar = new Polar({
     accessToken: process.env.POLAR_ACCESS_TOKEN || '',
 });
 
+export async function GET() {
+    return NextResponse.json({ status: 'Checkout API is live' });
+}
+
 export async function POST(req: NextRequest) {
     try {
         const { userId } = await auth();
@@ -15,8 +19,12 @@ export async function POST(req: NextRequest) {
 
         let productId = '';
         try {
-            const products = await polar.products.list({});
-            if (products.result.items.length > 0) {
+            // Find the first product - you should probably hardcode this or fetch by name
+            const products = await polar.products.list({
+                // list options
+            } as any);
+
+            if (products && products.result && products.result.items && products.result.items.length > 0) {
                 productId = products.result.items[0].id;
             }
         } catch (err) {
@@ -29,14 +37,14 @@ export async function POST(req: NextRequest) {
             }, { status: 400 });
         }
 
-        // In @polar-sh/sdk v0.42.x, it's likely checkouts.create
+        // Create checkout
         const checkout = await polar.checkouts.create({
             productId: productId,
             successUrl: process.env.POLAR_SUCCESS_URL || 'http://localhost:3000/success?checkout_id={CHECKOUT_ID}',
             customerMetadata: {
                 clerk_user_id: userId,
             },
-        } as any); // Cast to any to bypass strict type check if unsure about version diff
+        } as any);
 
         return NextResponse.json({ url: checkout.url });
     } catch (error: any) {

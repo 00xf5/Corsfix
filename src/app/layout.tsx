@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: "CORSFIXER | Decode & Fix CORS Errors Instantly",
   description: "A lightweight, ultra-fast tool to decode, explain, and fix CORS errors for developers. Get framework-specific solutions in seconds.",
   keywords: ["cors error", "blocked by cors policy", "cors fix", "how to fix cors", "cors nodejs", "cors react", "cors flask"],
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  }
 };
 
 export default function RootLayout({
