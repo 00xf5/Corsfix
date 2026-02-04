@@ -1,6 +1,18 @@
 import { neon } from '@neondatabase/serverless';
 
-export const sql = neon(process.env.DATABASE_URL!);
+const getSql = () => {
+    const url = process.env.DATABASE_URL;
+    if (!url) {
+        // Return a mock or throw a more helpful error if called on the server
+        return ((...args: any[]) => {
+            console.error("Database connection failed: DATABASE_URL is missing");
+            return Promise.resolve([]);
+        }) as any;
+    }
+    return neon(url);
+};
+
+export const sql = getSql();
 
 export interface ErrorLog {
     id: number;

@@ -1,3 +1,4 @@
+'use server';
 import { sql } from '@/lib/db';
 
 export async function logCORSError(errorType: string, framework: string, rawError: string, userId?: string) {
