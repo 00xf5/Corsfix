@@ -10,11 +10,11 @@ interface UpgradeModalProps {
 }
 
 const features = [
-    'Unlimited Snippet Storage',
+    'Unlimited Fix History',
     'AI-Powered Deep Root-Cause Analysis',
-    'Local Development Proxy Tunnel',
-    'Team Collaboration (Early Access)',
-    'Priority Dev Support',
+    'Premium Pro Dashboard',
+    'Priority Cloud Probe Access',
+    'Ad-Free Expert Solutions',
 ];
 
 export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {

@@ -1,11 +1,13 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { sql, ErrorLog } from '@/lib/db';
 import Navbar from '@/components/Navbar';
-import { Terminal, Calendar, Code2, ChevronRight, History, ShieldAlert } from 'lucide-react';
+import { Terminal, Calendar, Code2, ChevronRight, History, ShieldAlert, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function DashboardPage() {
     const { userId } = await auth();
+    const user = await currentUser();
+    const isPro = user?.publicMetadata?.role === 'pro';
 
     if (!userId) {
         return (
@@ -19,6 +21,30 @@ export default async function DashboardPage() {
                     </Link>
                 </div>
             </div>
+        );
+    }
+
+    if (!isPro) {
+        return (
+            <main className="relative min-h-screen">
+                <div className="mesh-bg" />
+                <Navbar />
+                <div className="max-w-7xl mx-auto px-6 pt-40 flex flex-col items-center text-center relative z-10">
+                    <div className="w-20 h-20 rounded-3xl bg-indigo-600/10 flex items-center justify-center text-indigo-400 mb-8 border border-indigo-600/20 shadow-2xl shadow-indigo-600/20">
+                        <Zap className="w-10 h-10" />
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-black text-white mb-6">Uncover the <span className="text-gradient-primary">Pro Library</span></h1>
+                    <p className="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
+                        The Developer Dashboard and Snippet History are exclusive to Pro members. Upgrade now to save your fixes and access them anytime.
+                    </p>
+                    <Link
+                        href="/#pricing"
+                        className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-10 rounded-2xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95"
+                    >
+                        See Pro Plans
+                    </Link>
+                </div>
+            </main>
         );
     }
 

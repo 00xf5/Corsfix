@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Send, Copy, Check, MessageSquareWarning, Code2, Lightbulb, ArrowRight, Save } from 'lucide-react';
+import { Search, Send, Copy, Check, MessageSquareWarning, Code2, Lightbulb, ArrowRight, Save, Crown } from 'lucide-react';
 import { analyzeCORSError, CORSAnalysis } from '@/lib/parser';
 import { cn } from '@/lib/utils';
 import { useAuth, SignedIn, useUser } from '@clerk/nextjs';
@@ -15,7 +15,18 @@ export default function Analyzer({ onUpgradeClick }: { onUpgradeClick?: () => vo
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [result, setResult] = useState<CORSAnalysis | null>(null);
     const [copied, setCopied] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
     const { userId } = useAuth();
+
+    useEffect(() => {
+        const handleSuccess = (event: any) => {
+            console.log('Bot verification successful!');
+            setIsVerified(true);
+        };
+
+        document.addEventListener('sentinelSuccess', handleSuccess);
+        return () => document.removeEventListener('sentinelSuccess', handleSuccess);
+    }, []);
 
     const handleAnalyze = async () => {
         if (!input.trim()) return;
@@ -50,7 +61,7 @@ export default function Analyzer({ onUpgradeClick }: { onUpgradeClick?: () => vo
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
+                            if (e.key === 'Enter' && !e.shiftKey && isVerified) {
                                 e.preventDefault();
                                 handleAnalyze();
                             }
@@ -59,41 +70,57 @@ export default function Analyzer({ onUpgradeClick }: { onUpgradeClick?: () => vo
                         className="w-full h-32 bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 resize-none outline-none text-base md:text-lg font-mono p-4"
                     />
 
-                    <div className="flex items-center justify-between p-2 pl-4">
-                        <div className="flex items-center gap-4 text-gray-500">
-                            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/5 text-[10px] font-bold uppercase tracking-wider">
-                                <span className="w-1 h-1 rounded-full bg-indigo-500 animate-pulse" />
-                                Ready
-                            </div>
+                    <div className="p-2 pb-4 pl-4 flex items-center gap-4 text-gray-500">
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/5 text-[10px] font-bold uppercase tracking-wider">
+                            <span className="w-1 h-1 rounded-full bg-indigo-500 animate-pulse" />
+                            Ready
+                        </div>
+                        {isVerified && (
                             <div className="hidden sm:flex items-center gap-1.5 text-[10px] font-medium opacity-50">
                                 <kbd className="px-1.5 py-0.5 rounded border border-white/10 bg-white/5 font-sans">Enter</kbd>
                                 <span>to fix</span>
                             </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={handleAnalyze}
-                                disabled={isAnalyzing || !input.trim()}
-                                className={cn(
-                                    "flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold transition-all active:scale-95 disabled:opacity-30 disabled:grayscale",
-                                    "bg-white text-black hover:bg-gray-200 shadow-xl"
-                                )}
-                            >
-                                {isAnalyzing ? (
-                                    <>
-                                        <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                        <span>Thinking...</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Send className="w-3.5 h-3.5" />
-                                        <span>Analyze</span>
-                                    </>
-                                )}
-                            </button>
-                        </div>
+                        )}
                     </div>
+                </div>
+            </div>
+
+            {/* Sentinel Widget Container */}
+            <div className="mt-8 flex flex-col items-center justify-center gap-6">
+                <div
+                    id="sentinel-widget"
+                    data-sitekey="sl_1504981437003675ddea32e5046c1890c7b661369acac8a1"
+                    className="min-h-[60px]"
+                ></div>
+
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={handleAnalyze}
+                        disabled={isAnalyzing || !input.trim() || !isVerified}
+                        className={cn(
+                            "flex items-center gap-2 px-10 py-4 rounded-2xl font-bold transition-all active:scale-95 disabled:opacity-30 disabled:grayscale shadow-2xl",
+                            isVerified
+                                ? "bg-white text-black hover:bg-gray-200"
+                                : "bg-white/5 text-gray-400 border border-white/10"
+                        )}
+                    >
+                        {isAnalyzing ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                <span>Analyzing Engine...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Send className="w-4 h-4" />
+                                <span>Get Solution</span>
+                            </>
+                        )}
+                    </button>
+                    {!isVerified && input.trim() && (
+                        <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest animate-pulse">
+                            Complete verification to continue
+                        </p>
+                    )}
                 </div>
             </div>
 
@@ -197,11 +224,26 @@ export default function Analyzer({ onUpgradeClick }: { onUpgradeClick?: () => vo
                         )}
 
                         <SignedIn>
-                            <div className="flex justify-center">
-                                <button className="flex items-center gap-2 text-gray-500 hover:text-white text-sm transition-colors">
-                                    <Save className="w-4 h-4" />
-                                    Save to my snippets
-                                </button>
+                            <div className="flex justify-center mt-8">
+                                {isPro ? (
+                                    <button
+                                        onClick={() => alert("Snippet saved to your dashboard!")}
+                                        className="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 text-sm font-bold transition-colors bg-indigo-500/5 px-4 py-2 rounded-full border border-indigo-500/10"
+                                    >
+                                        <Save className="w-4 h-4" />
+                                        Save to Snippet Library
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={onUpgradeClick}
+                                        className="flex items-center gap-2 text-gray-500 hover:text-white text-sm transition-colors group"
+                                    >
+                                        <div className="p-1 rounded bg-yellow-500/10 text-yellow-500 group-hover:bg-yellow-500/20">
+                                            <Crown className="w-3 h-3" />
+                                        </div>
+                                        <span>Upgrade to save this solution</span>
+                                    </button>
+                                )}
                             </div>
                         </SignedIn>
                     </motion.div>

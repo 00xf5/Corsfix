@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -25,6 +26,10 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           {children}
+          <Script
+            src="https://sentinel.risksignal.name.ng/widget.js"
+            strategy="afterInteractive"
+          />
         </body>
       </html>
     </ClerkProvider>

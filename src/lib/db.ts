@@ -1,18 +1,19 @@
 import { neon } from '@neondatabase/serverless';
 
-const getSql = () => {
-    const url = process.env.DATABASE_URL;
-    if (!url) {
-        // Return a mock or throw a more helpful error if called on the server
-        return ((...args: any[]) => {
-            console.error("Database connection failed: DATABASE_URL is missing");
-            return Promise.resolve([]);
-        }) as any;
-    }
-    return neon(url);
-};
+// Lazy database initialization to prevent client-side errors
+let sqlInstance: any = null;
 
-export const sql = getSql();
+export const sql = ((...args: any[]) => {
+    if (!sqlInstance) {
+        const url = process.env.DATABASE_URL;
+        if (!url) {
+            console.error("Database connection failed: DATABASE_URL is missing. DB operations will be skipped.");
+            return Promise.resolve([]);
+        }
+        sqlInstance = neon(url);
+    }
+    return (sqlInstance as any)(...args);
+}) as ReturnType<typeof neon>;
 
 export interface ErrorLog {
     id: number;

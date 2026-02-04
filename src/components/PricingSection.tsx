@@ -19,9 +19,9 @@ const tiers = [
         description: 'Advanced tools for professional developers.',
         features: [
             'AI-Powered Deep Insight',
-            'Local Proxy Tunnel',
-            'Snippet Library (Unlimited)',
-            'API Health Monitoring',
+            'Full Snippet Library (Unlimited)',
+            'Advanced Cloud Health Probe',
+            'No-Ad Expert Solutions',
             'Priority Support',
         ],
         cta: 'Upgrade to Pro',
