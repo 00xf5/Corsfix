@@ -1,7 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 
 const getDatabaseClient = () => {
-    const databaseUrl = process.env.DATABASE_URL;
+    const databaseUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_DIV34eiQtsEh@ep-mute-mud-ahhtj2hf-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
     if (!databaseUrl) {
         console.warn("DATABASE_URL not configured. Error logging disabled.");
         return null;

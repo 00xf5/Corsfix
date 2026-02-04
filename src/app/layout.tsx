@@ -3,6 +3,10 @@ import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
+// Hardcoded Clerk credentials
+process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ??= 'pk_test_Y3VycmVudC1sZW11ci03OC5jbGVyay5hY2NvdW50cy5kZXYk';
+process.env.CLERK_SECRET_KEY ??= 'sk_test_KSfBTF7RZ3sUQtv2NDXtk70OVoyPqq9KGHs7nZgE5K';
+
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
