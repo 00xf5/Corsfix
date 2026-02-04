@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { clerkClient } from '@clerk/nextjs/server';
 
+export async function GET() {
+    return NextResponse.json({ status: 'Polar webhook endpoint is active and public.' });
+}
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
