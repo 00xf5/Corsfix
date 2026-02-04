@@ -7,6 +7,7 @@ import { analyzeCORSError, CORSAnalysis } from '@/lib/parser';
 import { cn } from '@/lib/utils';
 import { useAuth, SignedIn, useUser } from '@clerk/nextjs';
 import { logCORSError } from '@/lib/logger';
+import Script from 'next/script';
 
 export default function Analyzer({ onUpgradeClick }: { onUpgradeClick?: () => void }) {
     const { user } = useUser();
@@ -86,12 +87,35 @@ export default function Analyzer({ onUpgradeClick }: { onUpgradeClick?: () => vo
             </div>
 
             {/* Sentinel Widget Container */}
-            <div className="mt-8 flex flex-col items-center justify-center gap-6">
-                <div
-                    id="sentinel-widget"
-                    data-sitekey="sl_1504981437003675ddea32e5046c1890c7b661369acac8a1"
-                    className="min-h-[60px]"
-                ></div>
+            <div className="mt-8 flex flex-col items-center justify-center gap-4">
+                <Script
+                    src="https://sentinel.risksignal.name.ng/widget.js"
+                    strategy="afterInteractive"
+                    onLoad={() => console.log("Sentinel script loaded successfully")}
+                />
+
+                <div className="flex flex-col items-center gap-2">
+                    <div
+                        id="sentinel-widget"
+                        data-sitekey="sl_1504981437003675ddea32e5046c1890c7b661369acac8a1"
+                        className="min-h-[70px] min-w-[300px] border border-indigo-500/20 rounded-xl bg-indigo-500/5 flex items-center justify-center relative shadow-[0_0_20px_rgba(99,102,241,0.05)]"
+                    >
+                        {!isVerified && (
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
+                                <span className="text-[10px] text-gray-400 uppercase tracking-widest animate-pulse">
+                                    Securing Connection...
+                                </span>
+                            </div>
+                        )}
+                        {isVerified && (
+                            <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest absolute">
+                                ✓ Bot Protection Active
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-[10px] text-gray-600 uppercase tracking-tighter opacity-50 font-bold">Encrypted Verification</p>
+                </div>
 
                 <div className="flex items-center gap-2">
                     <button

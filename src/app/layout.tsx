@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   }
 };
 
+import CodingRain from "@/components/CodingRain";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,11 +27,8 @@ export default function RootLayout({
     <ClerkProvider publishableKey="pk_test_Y3VycmVudC1sZW11ci03OC5jbGVyay5hY2NvdW50cy5kZXYk">
       <html lang="en">
         <body className={inter.className}>
+          <CodingRain />
           {children}
-          <Script
-            src="https://sentinel.risksignal.name.ng/widget.js"
-            strategy="afterInteractive"
-          />
         </body>
       </html>
     </ClerkProvider>
